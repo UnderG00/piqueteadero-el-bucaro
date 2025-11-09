@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Piqueteadero El Bucaro - Chatbot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="welcome-overlay-1" class="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome1-title">
+  <div class="welcome-card">
+    <h2 id="welcome1-title">¡Bienvenido a la web del Piqueteadero El Bucaro!</h2>
+    <p>Gracias por visitarnos💖.</p>
+    <button id="welcome-1-btn" class="btn">Dale aquí para continuar ▶</button>
+  </div>
+</div>
+
+<div id="welcome-overlay-2" class="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome2-title" hidden>
+  <div class="welcome-card">
+    <h2 id="welcome2-title">¡Utiliza Nuestro ChatBot!💬🤖</h2>
+    <p>Utiliza el Chat Bot que está disponible 24/7 en esta página para obtener información sobre nuestros platos, horarios, contactos, etc.</p>
+    <button id="welcome-2-btn" class="btn">Dale aquí para continuar con la página ▶</button>
+  </div>
+</div>
+
+  <header class="top">
+  <div class="container-header">
+    <div class="brand">
+      <img id="brandLogo" src="images/logoRestaurante.jpeg" alt="Logo Piqueteadero El Bucaro">
+      <div class="brand-text">
+      </div>
+  </div>
+  </header>
+
+  <main class="container main-grid">
+  <!-- Chat principal -->
+  <section class="chatbox" id="chatbox" aria-label="Chatbot">
+    <div id="messages" class="messages" role="log" aria-live="polite"></div>
+
+    <div class="quick" aria-hidden="false">
+      <button class="quick-btn" data-action="today">Platos del día</button>
+      <button class="quick-btn" data-action="menu">Ver carta Completa</button>
+      <button class="quick-btn" data-action="info">Información</button>
+      <button class="quick-btn" data-action="contact">Contacto</button>
+    </div>
+      <div class="inputrow" id="inputrow">
+      <input id="inputText" aria-label="Escribe tu mensaje" placeholder="Escribe: 'menú', 'menú del día', 'horario'..." autocomplete="off">
+      <button id="sendBtn" class="btn">Enviar</button>
+    </div>
+  </section>
+
+    <!-- Botón colapsable para móviles -->
+<button id="toggle-todayList" class="collapse-btn" aria-expanded="false" aria-controls="todayList">
+  🌟 Platos Populares (ver)
+</button>
+
+<aside class="sidebar" aria-label="Platos del día">
+  <h3>🌟Platos Populares🌟</h3>
+
+  <div id="todayList" class="todayList">
+
+    <div class="popular-item">
+      <img src="images/Plato_2.jpg" alt="Chivo Asado con Pepitoria" class="today-img">
+      <div>
+        <h4>Chivo Asado con Pepitoria</h4>
+        <p>$40.000 COP</p>
+      </div>
+    </div>
+
+    <div class="popular-item">
+      <img src="images/Plato_4.jpg" alt="Sopa de Mute" class="today-img">
+      <div>
+        <h4>Sopa de Mute</h4>
+        <p>$15.000 COP</p>
+      </div>
+    </div>
+
+    <div class="popular-item">
+      <img src="images/Plato_6.jpg" alt="Pepitoria" class="today-img">
+      <div>
+        <h4>Pepitoria</h4>
+        <p>$33.000 COP</p>
+      </div>
+    </div>
+
+    <div class="popular-item">
+      <img src="images/Plato_8.jpg" alt="Sancocho de cola (sábados)" class="today-img">
+      <div>
+        <h4>Sancocho de cola (sábados)</h4>
+        <p>$20.000 COP</p>
+      </div>
+    </div>
+
+  </div>
+</aside>
+<!-- Barra de chat fija (móvil) -->
+<div class="chat-input-wrapper" aria-hidden="false">
+  <div class="chat-input-container">
+    <input id="mobileInputText" type="text" placeholder="Escribe: 'menú', 'menú del día', 'horario', 'contacto', 'informacion'..." />
+    <button id="mobileSendBtn" class="btn">Enviar</button>
+  </div>
+</div>
+<!-- 🖼️ Visor de Imagen (Lightbox) -->
+<div id="image-viewer" class="image-viewer" hidden>
+  <div class="image-viewer-content">
+    <span id="close-viewer" class="close-viewer">&times;</span>
+    <img id="viewer-img" src="" alt="Plato">
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin - Piqueteadero El Bucaro</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .adminWrap{max-width:900px;margin:18px auto;padding:12px}
+    label{display:block;margin-top:8px;font-weight:600}
+    input, textarea, select{width:100%;padding:8px;border-radius:6px;border:1px solid #ddd}
+    .flex{display:flex;gap:10px}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+    .small{font-size:0.9rem;color:#666}
+  </style>
+</head>
+<body>
+  <div class="adminWrap">
+    <h2>Panel Admin - Piqueteadero El Bucaro</h2>
+    <div id="login">
+      <label>Contraseña admin</label>
+      <input id="pw" type="password" placeholder="Introduce la contraseña">
+      <button id="btnLogin" class="btn">Entrar</button>
+      <div class="small">Contraseña por defecto: <code>admin123</code> (cámbiala en variables de entorno)</div>
+    </div>
+
+    <div id="panel" style="display:none">
+      <h3>Datos del restaurante</h3>
+      <label>Nombre</label><input id="r_name">
+      <label>Teléfono</label><input id="r_phone">
+      <label>Dirección</label><input id="r_address">
+      <label>Horario</label><input id="r_hours">
+      <label>Info</label><input id="r_info">
+      <button id="saveRest" class="btn">Guardar</button>
+
+      <h3 style="margin-top:18px">Crear / Editar plato</h3>
+      <input id="dish_id" type="hidden">
+      <label>Nombre</label><input id="dish_name">
+      <label>Descripción</label><textarea id="dish_desc"></textarea>
+      <label>Precio</label><input id="dish_price">
+      <label>Categoría</label><input id="dish_cat">
+      <label>Imagen URL</label><input id="dish_img">
+      <label><input id="dish_today" type="checkbox"> Plato del día</label>
+      <label><input id="dish_avail" type="checkbox" checked> Disponible</label>
+      <div style="margin-top:8px">
+        <button id="saveDish" class="btn">Guardar Plato</button>
+        <button id="newDish" class="btn" style="background:#666">Nuevo</button>
+      </div>
+
+      
+      <h3 style="margin-top:18px">Menú del Día (Lunes a Viernes)</h3>
+      <table>
+        <thead><tr><th>Día</th><th>Plato</th><th>Precio</th></tr></thead>
+        <tbody id="weekday-table"></tbody>
+      </table>
+      <button id="saveWeekday" class="btn">Guardar Menú Entre Semana</button>
+
+      <h3 style="margin-top:18px">Menú Fin de Semana (Sábado y Domingo)</h3>
+      <table>
+        <thead><tr><th>Día</th><th>Plato</th><th>Precio</th></tr></thead>
+        <tbody id="weekend-table"></tbody>
+      </table>
+      <button id="saveWeekend" class="btn">Guardar Menú Fin de Semana</button>
+<h3 style="margin-top:18px">Platos</h3>
+      <div id="dishesList">Cargando...</div>
+    </div>
+  </div>
+
+<script>
+let adminPw = '';
+
+async function apiPost(path, body){
+  const res = await fetch('/api/' + path, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  if(!res.ok) throw new Error('API ' + res.status);
+  return res.json();
+}
+
+document.getElementById('btnLogin').addEventListener('click', async () => {
+  const pw = document.getElementById('pw').value.trim(); if(!pw) return alert('Introduce contraseña');
+  try{
+    const r = await apiPost('admin/login', { password: pw });
+    adminPw = pw;
+    document.getElementById('login').style.display='none';
+    document.getElementById('panel').style.display='block';
+    populateAdmin(r.data);
+  }catch(e){ alert('Contraseña incorrecta'); }
+});
+
+function populateAdmin(data){
+  document.getElementById('r_name').value = data.restaurant.name || '';
+  document.getElementById('r_phone').value = data.restaurant.phone || '';
+  document.getElementById('r_address').value = data.restaurant.address || '';
+  document.getElementById('r_hours').value = data.restaurant.hours || '';
+  document.getElementById('r_info').value = data.restaurant.info || '';
+  renderDishes(data.dishes);
+// Crear lista de platos para selects
+const dishOptions = data.dishes.map(d => 
+  `<option value="${d.name}" data-price="${d.price}">${d.name} (${d.price} COP)</option>`
+).join('');
+
+// --- MENÚ ENTRE SEMANA ---
+const weekdays = data.menu_weekday || {
+  monday:{name:'',price:''},
+  tuesday:{name:'',price:''},
+  wednesday:{name:'',price:''},
+  thursday:{name:'',price:''},
+  friday:{name:'',price:''}
+};
+
+document.getElementById("weekday-table").innerHTML = `
+${Object.entries(weekdays).map(([day, item])=>`
+<tr>
+  <td>${day}</td>
+  <td>
+    <select data-type="wd-name" data-day="${day}">
+      <option value="">(Seleccionar plato)</option>
+      ${dishOptions}
+    </select>
+  </td>
+ <td><textarea data-type="wd-items" data-day="${day}" placeholder="Un plato por línea, ej:
+Lengua asada - 33000
+Carne oreada - 35000">${item.items ? item.items.map(i=>`${i.name} - ${i.price}`).join('\n') : ''}</textarea></td>
+</tr>`).join('')}`;
+
+// Seleccionar automáticamente según el menú actual
+document.querySelectorAll('select[data-type="wd-name"]').forEach(sel => {
+  sel.value = weekdays[sel.dataset.day].name || "";
+  sel.addEventListener("change", () => {
+    const price = sel.selectedOptions[0].dataset.price || "";
+    document.querySelector(`input[data-type="wd-price"][data-day="${sel.dataset.day}"]`).value = price;
+  });
+});
+
+// --- FIN DE SEMANA ---
+const weekend = data.menu_weekend || {
+  saturday:{name:'',price:''},
+  sunday:{name:'',price:''}
+};
+
+document.getElementById("weekend-table").innerHTML = `
+${Object.entries(weekend).map(([day, item])=>`
+<tr>
+  <td>${day}</td>
+  <td>
+    <select data-type="we-name" data-day="${day}">
+      <option value="">(Seleccionar plato)</option>
+      ${dishOptions}
+    </select>
+  </td>
+  <td><input data-type="we-price" data-day="${day}" value="${item.price}"></td>
+</tr>`).join('')}`;
+
+document.querySelectorAll('select[data-type="we-name"]').forEach(sel => {
+  sel.value = weekend[sel.dataset.day].name || "";
+  sel.addEventListener("change", () => {
+    const price = sel.selectedOptions[0].dataset.price || "";
+    document.querySelector(`input[data-type="we-price"][data-day="${sel.dataset.day}"]`).value = price;
+  });
+});
+}
+
+
+function renderDishes(list){
+  const out = document.getElementById('dishesList');
+  if(!list.length) { out.innerHTML = '<div class="small">No hay platos</div>'; return; }
+  let html = '<table><thead><tr><th>Nombre</th><th>Precio</th><th>Hoy</th><th>Disp.</th><th></th></tr></thead><tbody>';
+  list.forEach(d => {
+    html += `<tr><td>${d.name}</td><td>${d.price||''}</td><td>${d.is_today? '✅':''}</td><td>${d.available? '✅':''}</td><td><button data-id="${d.id}" class="editBtn">Editar</button> <button data-id="${d.id}" class="delBtn" style="background:#c0392b">Borrar</button></td></tr>`;
+  });
+  html += '</tbody></table>';
+  out.innerHTML = html;
+  document.querySelectorAll('.editBtn').forEach(b => b.addEventListener('click', ()=> loadDish(b.dataset.id)));
+  document.querySelectorAll('.delBtn').forEach(b => b.addEventListener('click', ()=> deleteDish(b.dataset.id)));
+}
+
+async function loadDish(id){
+  try{
+    const r = await apiPost('admin/login', { password: adminPw });
+    const dish = r.data.dishes.find(x => x.id == id);
+    if(!dish) return alert('No encontrado');
+    document.getElementById('dish_id').value = dish.id;
+    document.getElementById('dish_name').value = dish.name || '';
+    document.getElementById('dish_desc').value = dish.description || '';
+    document.getElementById('dish_price').value = dish.price || '';
+    document.getElementById('dish_cat').value = dish.category || '';
+    document.getElementById('dish_img').value = dish.image_url || '';
+    document.getElementById('dish_today').checked = dish.is_today || false;
+    document.getElementById('dish_avail').checked = dish.available !== false;
+  }catch(e){ alert('Error'); }
+}
+
+async function deleteDish(id){
+  if(!confirm('Borrar plato?')) return;
+  try{
+    await apiPost('admin/dish/delete', { password: adminPw, id: Number(id) });
+    const r = await apiPost('admin/login', { password: adminPw });
+    renderDishes(r.data.dishes);
+  }catch(e){ alert('Error borrando'); }
+}
+
+document.getElementById('saveRest').addEventListener('click', async () => {
+  const obj = {
+    name: document.getElementById('r_name').value,
+    phone: document.getElementById('r_phone').value,
+    address: document.getElementById('r_address').value,
+    hours: document.getElementById('r_hours').value,
+    info: document.getElementById('r_info').value
+  };
+  try{
+    await apiPost('admin/restaurant', { password: adminPw, restaurant: obj });
+    alert('Guardado');
+  }catch(e){ alert('Error guardando'); }
+});
+
+document.getElementById('saveDish').addEventListener('click', async () => {
+  const id = document.getElementById('dish_id').value ? Number(document.getElementById('dish_id').value) : undefined;
+  const dish = {
+    id,
+    name: document.getElementById('dish_name').value,
+    description: document.getElementById('dish_desc').value,
+    price: document.getElementById('dish_price').value,
+    category: document.getElementById('dish_cat').value,
+    image_url: document.getElementById('dish_img').value,
+    is_today: document.getElementById('dish_today').checked,
+    available: document.getElementById('dish_avail').checked
+  };
+  try{
+    await apiPost('admin/dish', { password: adminPw, dish });
+    const r = await apiPost('admin/login', { password: adminPw });
+    renderDishes(r.data.dishes);
+    alert('Plato guardado');
+  }catch(e){ alert('Error guardando plato'); }
+});
+
+document.getElementById('newDish').addEventListener('click', ()=> {
+  document.getElementById('dish_id').value=''; document.getElementById('dish_name').value=''; document.getElementById('dish_desc').value=''; document.getElementById('dish_price').value=''; document.getElementById('dish_cat').value=''; document.getElementById('dish_img').value=''; document.getElementById('dish_today').checked=false; document.getElementById('dish_avail').checked=true;
+});
+
+document.getElementById("saveWeekday").addEventListener("click", async ()=>{
+  const rows = [...document.querySelectorAll("[data-type='wd-items']")];
+  const obj = {};
+  rows.forEach(inp=>{
+    const items = inp.value.trim().split("\n").map(line=>{
+      const [name, price] = line.split("-").map(s=>s.trim());
+      return { name, price };
+    });
+    obj[inp.dataset.day] = { items };
+  });
+  await apiPost("admin/menu_weekday",{ password: adminPw, menu: obj });
+  alert("Menú entre semana guardado ✅");
+});
+
+document.getElementById("saveWeekend").addEventListener("click", async ()=>{
+  const rows = [...document.querySelectorAll("[data-type='we-items']")];
+  const obj = {};
+  rows.forEach(inp=>{
+    const items = inp.value.trim().split("\n").map(line=>{
+      const [name, price] = line.split("-").map(s=>s.trim());
+      return { name, price };
+    });
+    obj[inp.dataset.day] = { items };
+  });
+
+  await apiPost("admin/menu_weekend",{ password: adminPw, menu: obj });
+  alert("Menú fin de semana guardado ✅");
+});
+
+</script>
+</body>
+</html>

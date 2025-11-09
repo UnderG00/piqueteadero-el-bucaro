@@ -1,0 +1,858 @@
+:root{
+  --accent:#9b4d1a;
+  --muted:#666;
+  --bg:#FAC4A7;
+  --max-width:1100px;
+  --gap:16px;
+  --header-height:84px;
+}
+
+/* base */
+*{box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;margin:0;background:var(--bg);color:#111}
+a{color:inherit;text-decoration:none}
+
+/* header */
+.top{background:var(--accent);color:white}
+.container-header{max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:64px;width:auto;object-fit:contain;border-radius:8px;display:block}
+.brand-text h1{margin:0;font-size:1.4rem}
+.brand-text p{margin:2px 0 0;font-size:0.95rem;opacity:0.95}
+.actions .admin-btn{background:rgba(255,255,255,0.12);padding:8px 10px;border-radius:8px;color:white}
+
+/* main layout */
+.main-grid{max-width:var(--max-width);margin:18px auto;display:grid;grid-template-columns:1fr 320px;gap:var(--gap);padding:0 12px}
+.chatbox{background:white;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.08);display:flex;flex-direction:column;overflow:hidden;min-height:60vh}
+.messages{padding:16px;overflow:auto}
+.quick{display:flex;gap:8px;padding:8px 12px;border-top:1px dashed #eee;flex-wrap:wrap}
+.quick-btn{border-radius:999px;padding:8px 12px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}
+.inputrow{display:flex;padding:12px;border-top:1px solid #eee;gap:8px;background:transparent}
+.inputrow input{flex:1;padding:10px;border-radius:8px;border:1px solid #ddd}
+.btn{background:var(--accent);color:white;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
+
+/* sidebar */
+.sidebar{background:transparent}
+.todayList .card{background:white;padding:10px;border-radius:8px;margin-bottom:10px;box-shadow:0 1px 6px rgba(0,0,0,0.06)}
+
+/* images responsive */
+.messages img, .todayList img, .brand img { max-width:100%; height:auto; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+
+  /* header */
+  .brand-text h1{font-size:1.05rem}
+  .brand img{height:48px}
+
+  /* layout -> columna */
+  .main-grid{display:flex;flex-direction:column;gap:12px;padding:0 10px}
+
+  /* hide sidebar on small screens */
+  .sidebar{display:none}
+
+  /* chat fills the screen */
+  .chatbox{min-height: calc(100vh - 140px);border-radius:10px;padding-bottom:80px;display:flex;flex-direction:column}
+  .messages{height:calc(100vh - 240px);overflow:auto;padding-bottom:20px}
+
+  /* fixed input at bottom */
+  .inputrow{
+    position:fixed;
+    left:12px;
+    right:12px;
+    bottom:12px;
+    display:flex;
+    gap:8px;
+    padding:10px;
+    background:transparent;
+    z-index:60;
+    border-radius:10px;
+  }
+  body{padding-bottom:90px} /* leave space for fixed input */
+
+  .quick{padding:8px;gap:6px}
+}
+
+/* very small screens */
+@media (max-width:420px){
+  .messages{height:calc(100vh - 260px)}
+  .brand img{height:44px}
+  .inputrow{left:8px;right:8px;bottom:8px}
+}
+/* ===== Welcome overlay + blur effect ===== */
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 8, 8, 0.55);
+  z-index: 9999;
+  padding: 20px;
+}
+
+/* tarjeta central del modal */
+.welcome-card {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  color: #111;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+.welcome-card h2 { margin: 0 0 8px; font-size: 1.4rem; }
+.welcome-card p { margin: 0 0 16px; color: var(--muted); }
+
+/* boton destacado */
+.welcome-card .btn { padding: 10px 16px; font-weight:600; }
+
+/* clase que aplica blur al contenido principal */
+.page-blurred {
+  filter: blur(6px) saturate(0.95);
+  -webkit-filter: blur(6px) saturate(0.95);
+  pointer-events: none; /* evita clicks sobre el contenido mientras está borroso */
+  user-select: none;
+}
+
+/* deshabilita scroll de fondo cuando el modal está abierto */
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* responsivo: tarjeta más pequeña en pantallas pequeñas */
+@media (max-width: 420px) {
+  .welcome-card { padding:16px; max-width: 92%; }
+  .welcome-card h2 { font-size: 1.15rem; }
+}
+
+/* Estilos para el botón plegable */
+.collapse-btn {
+  display: none; /* visible sólo en móvil con la regla de abajo */
+  width: 100%;
+  text-align: left;
+  padding: 10px;
+  font-size: 16px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+/* Móvil: mostrar botón y colapsar por defecto */
+@media (max-width: 768px) {
+  .collapse-btn { display: block; }
+  .sidebar { display: none; } /* arrancará oculta */
+  .sidebar.open { display: block; width:100%; }
+  .todayList { max-height: 260px; overflow-y:auto; }
+}
+/* ===========================
+   Barra de entrada fija (solo móvil)
+   =========================== */
+@media (max-width: 768px) {
+  .chat-input-wrapper {
+    position: fixed !important;
+    left: 0;
+    right: 0;
+    bottom: env(safe-area-inset-bottom, 0);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0));
+    background: rgba(255,255,255,0.98);
+    border-top: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 -6px 18px rgba(0,0,0,0.06);
+    transform: translateZ(0);
+  }
+
+  .chat-input-wrapper .chat-input-container {
+    width: calc(100% - 24px);
+    max-width: 900px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .chat-input-wrapper input[type="text"],
+  .chat-input-wrapper textarea {
+    flex: 1 1 auto;
+    min-height: 44px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.08);
+    padding: 12px;
+    font-size: 15px;
+    background: #fff;
+    box-sizing: border-box;
+  }
+
+  .chat-input-wrapper button {
+    flex: 0 0 auto;
+    min-width: 72px;
+    height: 44px;
+    border-radius: 8px;
+    border: none;
+    padding: 0 14px;
+  }
+
+  /* Garantizar espacio inferior en contenido principal */
+  main, .content, .chat-area {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0)) !important;
+  }
+}
+/* ==== Estilo de mensajes con imágenes del chat ==== */
+
+.chat-message img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-top: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Mejora del diseño general de los mensajes */
+.chat-message.bot {
+  background-color: #f0f0f0;
+  border-radius: 15px;
+  padding: 10px;
+  margin: 8px 0;
+  max-width: 85%;
+}
+
+.chat-message.user {
+  background-color: #d9fdd3;
+  border-radius: 15px;
+  padding: 10px;
+  margin: 8px 0;
+  align-self: flex-end;
+  max-width: 85%;
+}
+/* ---- FIX: ocultar barra móvil en pantallas grandes ---- */
+/* Por defecto (desktop): ocultar la barra móvil para evitar duplicado */
+.chat-input-wrapper {
+  display: none !important;
+}
+
+/* En móvil la mostramos (tu media-query ya controla posicionamiento) */
+@media (max-width: 768px) {
+  .chat-input-wrapper {
+    display: flex !important; /* o block según tu estilo */
+  }
+}
+
+
+/* ---- FIX: ocultar barra móvil en pantallas grandes ---- */
+/* Por defecto (desktop): ocultar la barra móvil para evitar duplicado */
+.chat-input-wrapper {
+  display: none !important;
+}
+
+/* En móvil la mostramos (tu media-query ya controla posicionamiento) */
+@media (max-width: 768px) {
+  .chat-input-wrapper {
+    display: flex !important;
+  }
+}
+
+/* ==== Estilo de mensajes con imágenes del chat ==== */
+.msg.bot img, .chat-message img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-top: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+/* =========================
+   FIX 1: Separación bienvenida / botones / input
+   ========================= */
+
+/* Aumenta separación después del primer mensaje del bot (bienvenida) */
+#messages .msg.bot:first-child {
+  margin-bottom: 100px;        /* separa el saludo del resto */
+  padding-bottom: 6px;
+  /* opcional: una línea sutil para separar visualmente */
+  border-bottom: 1px dashed rgba(0,0,0,0.04);
+}
+
+/* Si quieres que todos los mensajes tengan algo de espacio extra */
+#messages .msg { margin-bottom: 10px; }
+
+/* Asegura espacio claro entre los botones rápidos y la entrada */
+.chatbox .quick {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Entrada principal dentro del chat (desktop) */
+#inputrow, .inputrow {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+/* Si tienes la barra fija móvil, evita que empuje en escritorio */
+.chat-input-wrapper /* controlado por media queries previas */ 
+/* =========================
+   FIX 2: Evitar scroll horizontal / "barra blanca" derecha
+   ========================= */
+/* 1) Forzar que las imágenes no desborden */
+img, .brand img, .header img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* 2) Caja contenedora principal: limitar ancho y centrar */
+.container, .container-header, .main-grid {
+  box-sizing: border-box;
+  max-width: 1200px;    /* ajusta al ancho deseado */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* 3) Prevenir overflow horizontal en HTML/BODY */
+html, body {
+  overflow-x: hidden;   /* evita scroll horizontal por elementos que sobresalgan */
+}
+
+/* 4) Forzar cajas a no exceder ancho visual */
+* {
+  box-sizing: border-box;
+}
+
+/* 5) Si hay barras laterales o aside mal dimensionadas, limitar su anchura */
+aside.sidebar, .side, .right-column {
+  max-width: 340px;   /* ajustar si tienes una columna derecha */
+  box-sizing: border-box;
+}
+
+/* 6) Ajuste para banner grande: si tu cabecera tiene un banner ancho */
+.header-banner, .brand img {
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+}
+/* === 💬 NUEVO DISEÑO VISUAL CHATBOT (Basado en Sugerencia_1.png) === */
+
+/* Contenedor principal del chat */
+.chatbox {
+  background: #f9fafb;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  max-width: 420px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 600px;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  overflow: hidden;
+}
+
+/* Contenedor de mensajes */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+/* Estilos generales de burbujas */
+.messages p {
+  display: inline-block;
+  padding: 12px 16px;
+  border-radius: 18px;
+  max-width: 80%;
+  line-height: 1.4;
+  font-size: 15px;
+  animation: fadeInUp 0.4s ease forwards;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+/* Bot (lado izquierdo, azul) */
+.botText span {
+  background-color: #0078ff;
+  color: #fff;
+  border-radius: 18px 18px 18px 5px;
+  padding: 12px 16px;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(0, 120, 255, 0.25);
+}
+
+/* Usuario (lado derecho, blanco) */
+.userText {
+  text-align: right;
+}
+.userText span {
+  background-color: #ffffff;
+  color: #111;
+  border-radius: 18px 18px 5px 18px;
+  padding: 12px 16px;
+  display: inline-block;
+  border: 1px solid #e3e3e3;
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Botones rápidos */
+.quick {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.quick-btn {
+  background-color: transparent;
+  border: 1px solid #0078ff;
+  color: #0078ff;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-btn:hover {
+  background-color: #0078ff;
+  color: white;
+}
+
+/* Input */
+.inputrow {
+  display: flex;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eaeaea;
+  margin-top: 10px;
+}
+
+#inputText {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+#inputText:focus {
+  border-color: #0078ff;
+}
+
+/* Botón enviar */
+#sendBtn {
+  background-color: #0078ff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+#sendBtn:hover {
+  background-color: #005fcc;
+}
+
+/* Scroll personalizado */
+.messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background: rgba(0, 120, 255, 0.3);
+  border-radius: 3px;
+}
+
+.messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* === 💬 MEJORAS VISUALES CHATBOT (Problema_3) === */
+
+/* 1️⃣ BOTÓN ENVIAR más grande y visible */
+#sendBtn {
+  background-color: #0078ff;
+  color: white;
+  border: none;
+  border-radius: 25px; /* menos circular, más tipo píldora */
+  width: 80px; /* más ancho */
+  height: 45px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#sendBtn:hover {
+  background-color: #005fcc;
+  transform: scale(1.03);
+}
+
+/* 2️⃣ MOVER TÍTULO 'Platos Populares' ligeramente a la izquierda */
+h2, .titulo-platos {
+  text-align: center;
+  margin-left: -30px; /* ajusta este valor según se vea mejor */
+}
+
+/* 3️⃣ BURBUJAS VISIBLES (para bot y usuario) */
+.botText, .userText {
+  display: flex;
+  width: 100%;
+}
+
+/* BOT: fondo azul, texto blanco */
+.botText p,
+.botText div,
+.botText span {
+  background-color: #0078ff;
+  color: #fff;
+  border-radius: 18px 18px 18px 5px;
+  padding: 12px 16px;
+  margin: 5px 0;
+  max-width: 80%;
+  word-wrap: break-word;
+  box-shadow: 0 2px 8px rgba(0, 120, 255, 0.25);
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+/* USUARIO: fondo blanco, borde gris */
+.userText {
+  justify-content: flex-end;
+}
+.userText p,
+.userText div,
+.userText span {
+  background-color: #ffffff;
+  color: #111;
+  border-radius: 18px 18px 5px 18px;
+  padding: 12px 16px;
+  margin: 5px 0;
+  border: 1px solid #e3e3e3;
+  max-width: 80%;
+  word-wrap: break-word;
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+/* Animación suave */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* === NUEVO DISEÑO COMPLETO CHATBOT === */
+
+/* 1️⃣ Ajustar tamaño general en PC */
+@media (min-width: 1024px) {
+  .chatbox {
+    max-width: 600px;
+    padding: 25px;
+  }
+}
+
+/* 2️⃣ Estilo general de los mensajes */
+.botText, .userText {
+  display: flex;
+  align-items: flex-end;
+  margin: 8px 0;
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+/* --- BOT --- */
+.botText {
+  justify-content: flex-start;
+}
+
+.botText::before {
+  content: "";
+  background-image: url('images/bot-avatar.png'); /* ← puedes cambiar esta ruta */
+  background-size: cover;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0
+}
+
+/* Burbuja del BOT */
+.botText span {
+  background-color: #FFC107;
+  color: #000;
+  border-radius: 18px 18px 18px 5px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: 90%;
+  line-height: 1.4;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Pico de la burbuja del bot */
+.botText span::after {
+  content: "";
+  position: absolute;
+  left: -6px;
+  bottom: 8px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-right: 6px solid #FFC107;
+  border-bottom: 6px solid transparent;
+}
+
+/* --- USUARIO --- */
+.userText {
+  justify-content: flex-end;
+}
+
+/* Avatar del usuario opcional */
+.userText::after {
+  content: "";
+  background-image: url('images/user-avatar.png');
+  background-size: cover;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+
+/* Burbuja del USUARIO */
+.userText span {
+  background-color: #0078FF;
+  color: white;
+  border-radius: 18px 18px 5px 18px;
+  padding: 12px 16px;
+  max-width: 80%;
+  line-height: 1.4;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Pico de la burbuja del usuario */
+.userText span::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  bottom: 8px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-left: 6px solid #0078FF;
+  border-bottom: 6px solid transparent;
+}
+
+/* Animación */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* === FIX: preservar saltos y ajustar ancho/compatibilidad de burbujas === */
+.botText span,
+.userText span {
+  white-space: pre-wrap;       /* respeta \n y saltos */
+  word-break: break-word;      /* quiebra palabras largas */
+  overflow-wrap: anywhere;     /* mejor quiebre en palabras muy largas */
+  display: inline-block;
+  max-width: 100%;
+}
+
+/* Limites de burbuja para evitar overflow horizontal interno */
+.botText {
+  max-width: 78%;      /* ajusta para que no ocupe TODO el ancho */
+  margin-left: 60px;   /* espacio para avatar */
+  box-sizing: border-box;
+}
+
+.userText {
+  max-width: 78%;
+  margin-left: auto;
+  margin-right: 10px;
+  box-sizing: border-box;
+}
+
+/* Asegura que la lista completa no cree una barra dentro del mensaje */
+.botText span {
+  max-height: none;
+  overflow: visible;
+}
+
+/* Contenedor general: no permitir scroll horizontal */
+html, body {
+  overflow-x: hidden !important;
+}
+
+/* Mensajes: el contenedor gestiona el scroll vertical, no cada burbuja */
+.messages {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* En pantallas grandes permitir chat más ancho pero sin provocar overflow */
+@media (min-width: 1024px) {
+  .chatbox {
+    max-width: 900px;
+    width: 90%;
+  }
+}
+
+/* En móvil el chat debe ocupar 100% y respetar el padding */
+@media (max-width: 900px) {
+  .chatbox { width: 100%; padding: 12px; }
+  .botText { margin-left: 46px; } /* menos espacio para avatar en móvil */
+}
+
+.botText span { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; }
+
+@media (max-width: 600px) {
+  .message.bot {
+    max-width: 95%;
+  }
+  .message.bot .bubble {
+    max-width: calc(100% - 50px); /* deja espacio para el avatar */
+  }
+}
+/* Ocultar input de escritorio en móvil */
+@media (max-width: 600px) {
+  #inputrow {
+    display: none !important;
+  }
+}
+
+/* Ocultar barra móvil en PC */
+@media (min-width: 601px) {
+  .chat-input-wrapper {
+    display: none !important;
+  }
+}
+.chatbox {
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+/* Ajustar posición del mensaje del BOT solo en móviles */
+@media (max-width: 600px) {
+  .message.bot {
+    margin-left: -20px; /* mueve todo el bloque hacia la izquierda */
+  }
+
+  .message.bot .bot-avatar {
+    margin-left: 0px; /* aseguramos que el avatar no se desplace demasiado */
+  }
+
+  .message.bot .bubble {
+    margin-left: -10px; /* mantiene alineación correcta con el avatar */
+    max-width: calc(100% - 60px); /* evita que se sobreponga al avatar */
+  }
+}
+/* Asegurar que la barra de envío quede siempre por encima en móvil */
+@media (max-width: 600px) {
+  .input-container {
+    position: relative;
+    z-index: 9999; /* La ponemos adelante */
+  }
+
+  .quick-buttons, .chat-container {
+    z-index: 1; /* Aseguramos que no tapen la barra */
+  }
+
+  /* También aseguramos que el input no quede oculto por el teclado */
+  .input-container input {
+    touch-action: manipulation;
+  }
+}
+.chat-wrapper, .messages {
+  position: relative;
+  z-index: 1;
+}
+/* 🌟 Tarjetas de Platos Populares */
+.dish-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #fff5d7;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 2px solid #d9a441;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.15);
+}
+
+.dish-card img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.dish-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.3;
+}
+.image-viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.image-viewer-content {
+  position: relative;
+}
+
+.image-viewer img {
+  max-width: 90%;
+  max-height: 85vh;
+  border-radius: 12px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+}
+
+.close-viewer {
+  position: absolute;
+  top: -30px;
+  right: -10px;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .todayList {
+    grid-template-columns: 1fr 1fr; /* ✅ 2 columnas */
+  }
+}
