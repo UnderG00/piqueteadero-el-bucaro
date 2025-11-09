@@ -85,8 +85,9 @@ if (d.image_url) card.innerHTML += `<div style="margin-top:8px"><img src="${d.im
   // actualizar logo dinámicamente si existe la propiedad 'logo'
   const logoEl = document.getElementById('brandLogo');
   if (logoEl && r.logo && r.logo.trim() !== '') {
-    // opcional: evita recargar la misma URL si ya está puesta
-    if (logoEl.src !== r.logo) logoEl.src = r.logo;
+    // Asegurar que la ruta sea absoluta
+    const logoPath = r.logo.startsWith('/') ? r.logo : '/' + r.logo;
+    if (logoEl.src !== logoPath) logoEl.src = logoPath;
   }
 
   // actualizar el nombre del restaurante si se cambia desde admin
