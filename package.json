@@ -1,0 +1,24 @@
+{
+  "name": "piqueteadero-el-bucaro",
+  "version": "1.0.0",
+  "description": "Chatbot web para Piqueteadero El Bucaro con menú interactivo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "chatbot",
+    "restaurant",
+    "nodejs",
+    "express"
+  ],
+  "author": "Tu Nombre",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

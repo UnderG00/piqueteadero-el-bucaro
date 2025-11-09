@@ -1,0 +1,264 @@
+{
+  "restaurant": {
+    "name": "Piqueteadero El Bucaro",
+    "address": "",
+    "hours": "Lunes - Domingo📅  11:30am - 4:00pm⌚",
+    "info": "Especialidad en platos tipicos santandereanos",
+    "logo": "images/logoRestaurante.jpeg",
+    "phone": ""
+  },
+  "dishes": [
+    {
+      "id": 1,
+      "name": "Lengua asada o a la criolla",
+      "description": "Incluye Ensalada, Arroz, Yuca y Papa",
+      "price": 33000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 2,
+      "name": "Carne Oriada",
+      "description": "Incluye Ensalada, Arroz, Yuca y Papa",
+      "price": 35000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 3,
+      "name": "Sancocho de cola (sábados)",
+      "description": "Incluye Ensalada y Arroz (solo sábados)",
+      "price": "20000",
+      "category": "Especiales",
+      "image_url": "images/Plato_1.jpg",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 4,
+      "name": "Sopa de Mute (domingos)",
+      "description": "Incluye Ensalada y Arroz (solo domingos)",
+      "price": 20000,
+      "category": "Especiales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 5,
+      "name": "Arepa de Maíz Pelado",
+      "description": "",
+      "price": 4000,
+      "category": "Acompañamientos",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 6,
+      "name": "Chuleta / Pescado / Pollo",
+      "description": "Incluye Ensalada, Arroz, Yuca y Papa",
+      "price": 33000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 7,
+      "name": "Pepitoria",
+      "description": "",
+      "price": 33000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 8,
+      "name": "Costilla de Cerdo",
+      "description": "Incluye Ensalada, Arroz, Yuca y Papa",
+      "price": 33000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 9,
+      "name": "Plato de sopa de Mute",
+      "description": "",
+      "price": 15000,
+      "category": "Sopas",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 10,
+      "name": "Porción de papa / yuca / arroz",
+      "description": "",
+      "price": 6000,
+      "category": "Acompañamientos",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 11,
+      "name": "Porción de Pepitoria",
+      "description": "",
+      "price": 33000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 12,
+      "name": "Bebidas (Limonada vaso / Gaseosa / Cerveza)",
+      "description": "Limonada vaso 2000, Gaseosa 3500, Cerveza 4000 (platos a la carta no incluyen bebidas)",
+      "price": 0,
+      "category": "Bebidas",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 13,
+      "name": "Vaso de Guarapo",
+      "description": "",
+      "price": 3000,
+      "category": "Bebidas",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 14,
+      "name": "Jarra de Guarapo",
+      "description": "",
+      "price": 10000,
+      "category": "Bebidas",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 15,
+      "name": "Jarra de Limonada",
+      "description": "",
+      "price": 8000,
+      "category": "Bebidas",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 16,
+      "name": "Chivo asado con pepitoria",
+      "description": "",
+      "price": 40000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 17,
+      "name": "Chivo Asado",
+      "description": "",
+      "price": 35000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 18,
+      "name": "Hueso de cerdo",
+      "description": "Incluye Ensalada, Arroz, Yuca y Papa",
+      "price": 45000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 19,
+      "name": "Sobre barriga asada o a la criolla",
+      "description": "Incluye Ensalada, Arroz, Yuca y Papa",
+      "price": 33000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 20,
+      "name": "Carne asada",
+      "description": "Incluye Ensalada, Arroz, Yuca y Papa",
+      "price": 33000,
+      "category": "Principales",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 21,
+      "name": "Tilapia",
+      "description": "Incluye Ensalada, Arroz, Yuca y Papa",
+      "price": 33000,
+      "category": "Pescados",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    },
+    {
+      "id": 22,
+      "name": "Almuerzos desde 12.000 - Para llevar 13.000",
+      "description": "",
+      "category": "Almuerzos",
+      "image_url": "",
+      "is_today": true,
+      "available": true
+    }
+  ],
+  "menu_weekday": {
+    "monday": {
+      "name": "Lengua asada o a la criolla",
+      "price": "33000"
+    },
+    "tuesday": {
+      "name": "Carne Oriada",
+      "price": "35000"
+    },
+    "wednesday": {
+      "name": "Costilla de Cerdo",
+      "price": "33000"
+    },
+    "thursday": {
+      "name": "Sobre barriga asada o a la criolla",
+      "price": "33000"
+    },
+    "friday": {
+      "name": "Hueso de cerdo",
+      "price": "45000"
+    }
+  },
+  "nextId": 1,
+  "menu_weekend": {
+    "saturday": {
+      "name": "Sancocho de cola (sábados)",
+      "price": "20.000"
+    },
+    "sunday": {
+      "name": "Sopa de Mute, Incluye ensalada y arroz (Domingo)",
+      "price": "20.000"
+    }
+  }
+}
