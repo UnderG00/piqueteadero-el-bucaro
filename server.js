@@ -18,7 +18,7 @@ function ensureData(){
         address: "Carrera 12 #34-56, Cali",
         hours: "Lun-Dom 10:00 - 21:00",
         info: "Especialidad en platos tipicos santandereanos",
-        logo: ""
+        logo: "images/logo-restaurante.jpg"
       },
       dishes: [
         { id: 1, name: "Bandeja Bucareña", description: "Carne, arroz, plátano, ensalada", price: 22000, category: "Principal", image_url: "", is_today: true, available: true },
